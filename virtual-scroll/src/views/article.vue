@@ -12,7 +12,7 @@
         <span>{{ $route.params.from }}</span>
         <span>{{ $route.params.date }}</span>
       </p>
-      <img :src="imgsList[$route.params.image as number]" />
+      <img :src="imgsList[$route.params.image as any]" />
       <p>这里是新闻详情页面...</p>
       <p>这里是新闻详情页面...</p>
       <img :src="imgsList[1]" />

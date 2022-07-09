@@ -1,8 +1,8 @@
 <template>
   <div class="news-box">
-    <div class="scroll-container">
+    <div class="scroll-container" @scroll="handleScroll">
       <!-- 根据待显示新闻列表数组，显示新闻列表 -->
-      <div v-for="(item, index) in data.allDataList" :key="index">
+      <div v-for="(item, index) in showDataList" :key="index">
         <router-link
           class="one-new"
           :to="
@@ -23,7 +23,7 @@
             <h3>{{ item.title }}</h3>
             <div>
               <p>
-                <img src="../assets/icons/msg.png" alt="评" />
+                <img src="../../assets/icons/msg.png" alt="评" />
                 <span>{{ item.reads }}</span>
                 <span>{{ item.from }}</span>
               </p>
@@ -45,44 +45,13 @@
 </template>
 
 <script lang="ts" setup>
-// 引入准备好的新闻图片相关信息
-import imgsList from '../components/newsImgs.js'
-import axios from 'axios'
-import { reactive, onMounted } from 'vue'
-const data = reactive({
-  // 用来保存 所有列表元素
-  allDataList: [] as any[],
-  // 数据请求状态判断
-  isRequestStatus: true,
-  // 提示显示信息
-  msg: '小二正在努力，请耐心等待...',
-  // 图片数组
-  imgsList,
-})
-const getMock = (num: number) => {
-  data.isRequestStatus = true
-  data.msg = '小二正在努力，请耐心等待...'
-  return axios
-    .get('http://localhost:4000/data?num=' + num)
-    .then(res => {
-      data.isRequestStatus = false
-      return res.data.array
-    })
-    .catch(() => {
-      data.msg = '亲，网络请求出错啦！赶快检查吧...'
-      return false
-    })
-}
-onMounted(async () => {
-  // 分批发送请求时，先请求一部分数据保证数据显示
-  let request = await getMock(1000)
-  console.log(request)
-
-  if (!!request && request.length > 0) {
-    data.allDataList = [...request]
-    data.isRequestStatus = false
-  }
-})
+import imgsList from '../../components/newsImgs.js'
+import useFetchData from './Hooks/useFetchData'
+import useFilterList from './Hooks/useFilterList'
+import useListInfo from './Hooks/useListInfo'
+const data = useFetchData()
+const info = useListInfo()
+const { handleScroll, showDataList } = useFilterList(data, info)
 </script>
 
 <style lang="less" scoped>
@@ -93,6 +62,7 @@ onMounted(async () => {
   .scroll-container {
     width: 100%;
     height: 100%;
+    overflow: auto;
     .one-new {
       text-decoration: none;
       display: block;
