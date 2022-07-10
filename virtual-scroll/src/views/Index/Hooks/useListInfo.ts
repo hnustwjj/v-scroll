@@ -16,6 +16,8 @@ export default function useListInfo() {
     // 屏幕翻转
     window.onorientationchange = getMaxRow
   })
-  
+
   return info
 }
+
+export type ListInfo = ReturnType<typeof useListInfo>

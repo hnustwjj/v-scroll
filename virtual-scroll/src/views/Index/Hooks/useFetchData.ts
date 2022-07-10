@@ -1,6 +1,6 @@
 import imgsList from '../../../components/newsImgs.js'
 import axios from 'axios'
-import { reactive, onMounted } from 'vue'
+import { reactive, onMounted, toRefs } from 'vue'
 export default function useFetchData() {
   const data = reactive({
     allDataList: [] as any[],
@@ -31,5 +31,5 @@ export default function useFetchData() {
       data.isRequestStatus = false
     }
   })
-  return data
+  return { ...toRefs(data) }
 }

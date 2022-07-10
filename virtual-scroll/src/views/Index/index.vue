@@ -1,57 +1,68 @@
 <template>
   <div class="news-box">
     <div class="scroll-container" @scroll="handleScroll">
-      <!-- 根据待显示新闻列表数组，显示新闻列表 -->
-      <div v-for="(item, index) in showDataList" :key="index">
-        <router-link
-          class="one-new"
-          :to="
-            '/article/' +
-            item.title +
-            '/' +
-            item.reads +
-            '/' +
-            item.from +
-            '/' +
-            item.date +
-            '/' +
-            item.image
-          "
-        >
-          <!-- 新闻左侧标题、评论、来源部分 -->
-          <div class="new-left">
-            <h3>{{ item.title }}</h3>
-            <div>
-              <p>
-                <img src="../../assets/icons/msg.png" alt="评" />
-                <span>{{ item.reads }}</span>
-                <span>{{ item.from }}</span>
-              </p>
-              <h4>{{ item.date }}</h4>
+      <div :style="fillStyle">
+        <!-- 根据待显示新闻列表数组，显示新闻列表 -->
+        <div v-for="(item, index) in showDataList" :key="index">
+          <router-link
+            class="one-new"
+            :to="
+              '/article/' +
+              item.title +
+              '/' +
+              item.reads +
+              '/' +
+              item.from +
+              '/' +
+              item.date +
+              '/' +
+              item.image
+            "
+          >
+            <!-- 新闻左侧标题、评论、来源部分 -->
+            <div class="new-left">
+              <h3>{{ item.title }}</h3>
+              <div>
+                <p>
+                  <img src="../../assets/icons/msg.png" alt="评" />
+                  <span>{{ item.reads }}</span>
+                  <span>{{ item.from }}</span>
+                </p>
+                <h4>{{ item.date }}</h4>
+              </div>
             </div>
-          </div>
-          <!-- 新闻右侧图片部分 -->
-          <div class="new-right">
-            <img :src="imgsList[item.image]" alt="PIC" />
-          </div>
-        </router-link>
-      </div>
-      <!-- 请求状态下 显示对应 msg 提示信息 -->
-      <div v-if="data.isRequestStatus" class="msg">
-        <h2>{{ data.msg }}</h2>
+            <!-- 新闻右侧图片部分 -->
+            <div class="new-right">
+              <img :src="imgsList[item.image]" alt="PIC" />
+            </div>
+          </router-link>
+        </div>
+        <!-- 请求状态下 显示对应 msg 提示信息 -->
+        <div v-if="isRequestStatus" class="msg">
+          <h2>{{ msg }}</h2>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import imgsList from '../../components/newsImgs.js'
 import useFetchData from './Hooks/useFetchData'
+import useFill from './Hooks/useFill'
 import useFilterList from './Hooks/useFilterList'
 import useListInfo from './Hooks/useListInfo'
-const data = useFetchData()
+const { allDataList, msg, isRequestStatus, imgsList } = useFetchData()
 const info = useListInfo()
-const { handleScroll, showDataList } = useFilterList(data, info)
+const { handleScroll, showDataList, startIndex, endIndex } = useFilterList(
+  allDataList,
+  info
+)
+const fillStyle = useFill(
+  allDataList,
+  startIndex,
+  endIndex,
+  info.listItemHeight
+)
 </script>
 
 <style lang="less" scoped>

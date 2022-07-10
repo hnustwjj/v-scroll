@@ -1,13 +1,14 @@
-import { computed, ref } from 'vue'
+import { ListInfo } from './useListInfo'
+import { computed, Ref, ref } from 'vue'
 
-export default function useFilterList(data: any, info: any) {
+export default function useFilterList(allDataList: Ref<any[]>, info: ListInfo) {
   const startIndex = ref(0)
   // 记录当前滚动情况下要显示的最后一个列表项的下标
   const endIndex = computed(() => {
     const endindex = startIndex.value + info.maxRow
     // 判断下表是否越界
-    return endindex > data.allDataList.length
-      ? data.allDataList.length - 1
+    return endindex > allDataList.value.length
+      ? allDataList.value.length - 1
       : endindex
   })
 
@@ -19,10 +20,12 @@ export default function useFilterList(data: any, info: any) {
 
   // 截取要显示的内容
   const showDataList = computed(() =>
-    data.allDataList.slice(startIndex.value, endIndex.value)
+    allDataList.value.slice(startIndex.value, endIndex.value)
   )
   return {
     showDataList,
     handleScroll,
+    startIndex,
+    endIndex,
   }
 }
