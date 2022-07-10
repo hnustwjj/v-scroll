@@ -51,11 +51,13 @@ import useFetchData from './Hooks/useFetchData'
 import useFill from './Hooks/useFill'
 import useFilterList from './Hooks/useFilterList'
 import useListInfo from './Hooks/useListInfo'
-const { allDataList, msg, isRequestStatus, imgsList } = useFetchData()
+const { allDataList, msg, isRequestStatus, imgsList, getMock } = useFetchData()
 const info = useListInfo()
 const { handleScroll, showDataList, startIndex, endIndex } = useFilterList(
   allDataList,
-  info
+  info,
+  getMock,
+  isRequestStatus
 )
 const fillStyle = useFill(
   allDataList,

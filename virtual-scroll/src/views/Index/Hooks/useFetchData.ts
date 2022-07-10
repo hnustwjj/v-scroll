@@ -27,9 +27,9 @@ export default function useFetchData() {
     // 分批发送请求时，先请求一部分数据保证数据显示
     const request = await getMock(100)
     if (!!request && request.length > 0) {
-      data.allDataList = [...request]
+      data.allDataList = request
       data.isRequestStatus = false
     }
   })
-  return { ...toRefs(data) }
+  return { ...toRefs(data), getMock }
 }
