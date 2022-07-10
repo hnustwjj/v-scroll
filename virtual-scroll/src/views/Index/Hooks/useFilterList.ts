@@ -1,6 +1,6 @@
 import { ListInfo } from './useListInfo'
 import { computed, Ref, ref } from 'vue'
-
+import useThrottle from '../../../utils/throttle'
 export default function useFilterList(
   allDataList: Ref<any>,
   info: ListInfo,
@@ -18,7 +18,8 @@ export default function useFilterList(
   })
 
   // 在滚动的时候记录当前滚动情况下要显示的第一个列表项的下表
-  const handleScroll = async (e: Event) => {
+  const handleScroll = useThrottle(async (e: Event) => {
+    console.log(1)
     const scrollTop = (e.target as HTMLElement).scrollTop
     const currentIndex = ~~(scrollTop / info.listItemHeight)
     // 如果startIndex等于currentIndex，就return不执行任何操作，这样可以减少一些后面代码的执行
@@ -34,7 +35,7 @@ export default function useFilterList(
         allDataList.value = [...allDataList.value, ...request]
       }
     }
-  }
+  }, 30)
 
   // 截取要显示的内容
   const showDataList = computed(() =>
