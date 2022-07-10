@@ -1,6 +1,6 @@
 <template>
   <div class="news-box">
-    <div class="scroll-container" @scroll="handleScroll">
+    <div class="scroll-container" @scroll="handleScroll" ref="scrollContainer">
       <div :style="fillStyle">
         <!-- 根据待显示新闻列表数组，显示新闻列表 -->
         <div v-for="(item, index) in showDataList" :key="index">
@@ -51,20 +51,19 @@ import useFetchData from './Hooks/useFetchData'
 import useFill from './Hooks/useFill'
 import useFilterList from './Hooks/useFilterList'
 import useListInfo from './Hooks/useListInfo'
+import useActivated from './Hooks/useActivated'
 const { allDataList, msg, isRequestStatus, imgsList, getMock } = useFetchData()
 const info = useListInfo()
-const { handleScroll, showDataList, startIndex, endIndex } = useFilterList(
-  allDataList,
-  info,
-  getMock,
-  isRequestStatus
-)
+const { handleScroll, showDataList, startIndex, endIndex, currentScrollTop } =
+  useFilterList(allDataList, info, getMock, isRequestStatus)
 const fillStyle = useFill(
   allDataList,
   startIndex,
   endIndex,
-  info.listItemHeight
+  info.listItemHeight,
+  info
 )
+const { scrollContainer } = useActivated(currentScrollTop)
 </script>
 
 <style lang="less" scoped>
