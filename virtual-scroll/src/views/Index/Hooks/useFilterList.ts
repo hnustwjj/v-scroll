@@ -35,7 +35,7 @@ export default function useFilterList(
         allDataList.value = [...allDataList.value, ...request]
       }
     }
-  }, 30)
+  })
 
   // 截取要显示的内容
   const showDataList = computed(() =>
