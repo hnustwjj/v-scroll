@@ -1,5 +1,24 @@
 import { computed, ref, onActivated, nextTick, Ref } from 'vue'
-import useThrottle from '../../../utils/throttle'
+
+function useThrottle(fn: Function) {
+  const requestAnimationFrame =
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame
+  let preTime = 0
+  const fps = 30
+  const interval = 1000 / fps
+  return function (...args: any[]) {
+    requestAnimationFrame(() => {
+      const now = Date.now()
+      if (now - preTime > interval) {
+        fn(...args)
+        preTime = now
+      }
+    })
+  }
+}
+
 export default function useFilterList(
   allDataList: Ref<any[]>,
   info: { maxRow: number; listItemHeight: number },
@@ -12,9 +31,7 @@ export default function useFilterList(
   const endIndex = computed(() => {
     const index = startIndex.value + info.maxRow * 2
     // 判断下表是否越界
-    return index > length.value 
-            ? length.value - 1 
-            : index
+    return index > length.value ? length.value - 1 : index
   })
 
   // 截取要显示的内容
@@ -46,9 +63,8 @@ export default function useFilterList(
     // 如果startIndex等于currentIndex，就return不执行任何操作，这样可以减少一些后面代码的执行
     if (currentIndex === startIndex.value) return
     startIndex.value = currentIndex
-    // 如果滚动到底部并且目前没有请求数据
-    if (startIndex.value + info.maxRow > length.value - 1) {
-      console.log(1)
+    // 如果滚动到底部
+    if (startIndex.value + info.maxRow  + 1 > length.value - 1) {
       callback && callback()
     }
   })
@@ -56,9 +72,7 @@ export default function useFilterList(
   // 上下填充样式
   const fillStyle = computed(() => {
     const start =
-      startIndex.value <= info.maxRow 
-        ? 0 
-        : startIndex.value - info.maxRow
+      startIndex.value <= info.maxRow ? 0 : startIndex.value - info.maxRow
 
     return {
       paddingTop: info.listItemHeight * start + 'px',

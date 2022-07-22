@@ -1,10 +1,6 @@
 <template>
   <div class="news-box">
-    <v-scroll
-      msg="loading..."
-      :data="allDataList"
-      :callback="onScrollToBottom"
-    >
+    <v-scroll :data="allDataList" :callback="onScrollToBottom">
       <template #default="{ item }">
         <router-link
           class="one-new"
@@ -39,6 +35,7 @@
           </div>
         </router-link>
       </template>
+
       <template #footer>
         <!-- 请求状态下 显示对应 msg 提示信息 -->
         <div v-if="isRequestStatus" class="msg">
