@@ -1,16 +1,17 @@
-import imgsList from '../../../components/newsImgs.js'
+import imgsList from '../../components/newsImgs.js'
 import axios from 'axios'
 import { reactive, onMounted, toRefs } from 'vue'
 export default function useFetchData() {
   const data = reactive({
     allDataList: [] as any[],
     isRequestStatus: true,
-    msg: '小二正在努力，请耐心等待...',
+    msg: 'loading...',
     imgsList,
   })
+
   const getMock = (num: number) => {
     data.isRequestStatus = true
-    data.msg = '小二正在努力，请耐心等待...'
+    data.msg = 'loading...'
     return axios
       .get('http://localhost:4000/data?num=' + num)
       .then(res => {
@@ -18,9 +19,18 @@ export default function useFetchData() {
         return res.data.array
       })
       .catch(() => {
-        data.msg = '亲，网络请求出错啦！赶快检查吧...'
+        data.msg = 'err'
         return false
       })
+  }
+  const onScrollToBottom = async () => {
+    // 如果滚动到底部并且目前没有请求数据
+    if (!data.isRequestStatus) {
+      const request = await getMock(20)
+      if (request) {
+        data.allDataList = [...data.allDataList, ...request]
+      }
+    }
   }
 
   onMounted(async () => {
@@ -31,5 +41,5 @@ export default function useFetchData() {
       data.isRequestStatus = false
     }
   })
-  return { ...toRefs(data), getMock }
+  return { ...toRefs(data), onScrollToBottom }
 }
